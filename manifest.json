@@ -1,0 +1,20 @@
+{
+  "name": "Covin Vaccine Availability Finder",
+  "description": "Find vaccine avilability on Cowin ",
+  "version": "1.0",
+  "manifest_version": 3,
+  "permissions": ["alarms", "notifications", "storage", "tabs", "background"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Covin Vaccine Availability Finder",
+    "default_popup": "popup.html"
+  },
+  "icons": {
+    "16": "icon16.png",
+    "32": "icon32.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
+}
