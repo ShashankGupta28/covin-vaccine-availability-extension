@@ -12,7 +12,7 @@ function filterAvailability(data){
     const sessions = obj.sessions;
     for(var i=0;i<sessions.length;i++){
       const session = sessions[i];
-     if(session.min_age_limit === 18  && session.available_capacity_dose1){
+     if(session.min_age_limit === 18  && session.available_capacity_dose1 > 1){
        return true
      }
     }
@@ -37,27 +37,34 @@ function handleAvailableCentersTab(){
   });
 }
 
-function fetchDataFromApi(district_id){
+async function fetchDataFromApi(district_id){
   let date = new Date();
-  let dateString = date.getDate()  + "-" + (date.getMonth()+1) + "-" + date.getFullYear()
-  let apiUrl = 'https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id=' + district_id +'&date=' + dateString;
+  let dateString = date.getDate()  + "-" + ('0'+(date.getMonth()+1)).slice(-2) + "-" + date.getFullYear()
+  let apiUrl = 'https://cdn-api.co-vin.in/api/v2/appointment/sessions/calendarByDistrict?district_id=' + district_id +'&date=' + dateString;
+  let fallbackApiUrl = 'https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id=' + district_id +'&date=' + dateString;
   console.log(apiUrl);
-  fetch(apiUrl).then(r =>  r.json()
-    .then(data => { 
-      const availabeOptions = filterAvailability(data);
-      console.log("availabeOptions : " + availabeOptions.length); 
-      if(availabeOptions.length){
-        console.log(new Date())
-        chrome.action.setBadgeText({text: 'Available'});
-        chrome.storage.local.set({"availabeOptions": availabeOptions});
-        handleAvailableCentersTab();
-      }else{
-        chrome.storage.local.set({"availabeOptions": []});
-        chrome.action.setBadgeText({text: 'ON'});
-        closeAvailableCentersTab();
-      }
-    })
-  );
+  let request = await fetch(apiUrl);
+  if(!request.ok){
+    console.log("Falback Api Url working")
+    request = await fetch(fallbackApiUrl);
+  }
+  const data = await request.json();
+  handleResponse(data);
+}
+
+function handleResponse(data){
+  const availabeOptions = filterAvailability(data);
+  console.log("availabeOptions : " + availabeOptions.length); 
+  if(availabeOptions.length){
+    console.log(new Date())
+    chrome.action.setBadgeText({text: 'Available'});
+    chrome.storage.local.set({"availabeOptions": availabeOptions});
+    handleAvailableCentersTab();
+  }else{
+    chrome.storage.local.set({"availabeOptions": []});
+    chrome.action.setBadgeText({text: 'ON'});
+    closeAvailableCentersTab();
+  }
 }
 
 chrome.alarms.onAlarm.addListener(() => {
@@ -67,6 +74,7 @@ chrome.alarms.onAlarm.addListener(() => {
 });
 
 function onInstalled(){
+  console.log("onInstalled");
   chrome.storage.local.set({"enableSound": true}, function() {
     console.log('Sound Notification is set to ' + true);
   });
@@ -76,7 +84,7 @@ function onStartup() {
   console.log("onStartup");
   chrome.storage.local.get(['state','district'], function(result) {
     if(result.state && result.district){
-      chrome.alarms.clearAll();
+      chrome.alarms.clear("VacNotification");
       chrome.action.setBadgeText({text: 'ON'});
       chrome.alarms.create("VacNotification",{ periodInMinutes: 1 });
     }

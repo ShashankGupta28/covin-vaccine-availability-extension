@@ -18,7 +18,7 @@
 
 function enableNotification(event) {
   console.log("Notification set")
-  chrome.alarms.clearAll();
+  chrome.alarms.clear("VacNotification");
   chrome.action.setBadgeText({text: 'ON'});
   chrome.alarms.create("VacNotification",{ periodInMinutes: 1 });
   window.close();
@@ -27,7 +27,7 @@ function enableNotification(event) {
 function clearNotification() {
   console.log("Notification cleared")
   chrome.action.setBadgeText({text: ''});
-  chrome.alarms.clearAll();
+  chrome.alarms.clear("VacNotification");
   window.close();
 }
 
@@ -38,7 +38,7 @@ function handleSoundNotification(){
   });
 }
 
-function populateDistrictsSelect(state_id,district){
+function populateDistrictsSelect(state_id,selectedDistrict){
   let apiUrl = 'https://cdn-api.co-vin.in/api/v2/admin/location/districts/'+state_id;
   fetch(apiUrl).then(r =>  r.json()
     .then(data => { 
@@ -48,8 +48,8 @@ function populateDistrictsSelect(state_id,district){
         options+= '<option value="'+ district.district_id +'">' + district.district_name +'</option>';
       });
       document.getElementById('district').innerHTML = options;
-      if(district){
-        document.getElementById('district').value = district
+      if(selectedDistrict){
+        document.getElementById('district').value = selectedDistrict;
       }
     })
   );
@@ -68,7 +68,10 @@ function setSelectedFields(){
     console.log(result.state)
     if(result.state){
       document.getElementById('state').value = result.state;
+      populateDistrictsSelect(result.state);
     }
+    console.log("district");
+    console.log(result.district)
     if(result.district){
       populateDistrictsSelect(result.state, result.district);
     }
@@ -77,12 +80,13 @@ function setSelectedFields(){
 
 function handleStateChange(){
   console.log(" handleStateChange");
-  chrome.alarms.clearAll();
+  chrome.alarms.clear("VacNotification");
   chrome.action.setBadgeText({text: ''});
   const value = document.getElementById('state').value;
   if(value !== "Select State"){
     chrome.storage.local.set({"state": value}, function() {
       console.log('State is set to ' + value);
+      chrome.storage.local.remove(["district"]);
       populateDistrictsSelect(value);
     });
   }
@@ -102,7 +106,7 @@ function handleDistrictChange(){
 
 function startNotification() {
   console.log("startNotification");
-  chrome.alarms.clearAll();
+  chrome.alarms.clear("VacNotification");
   chrome.action.setBadgeText({text: 'ON'});
   chrome.alarms.create("VacNotification",{ periodInMinutes: 1 });
 }
