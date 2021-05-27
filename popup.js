@@ -38,6 +38,22 @@ function handleSoundNotification(){
   });
 }
 
+function handleAgeSelectionAdult(){
+  console.log("Age selection Adult");
+  const checkBox = document.getElementById('18+');
+  chrome.storage.local.set({"18+": checkBox.checked}, function() {
+    console.log('Adult age selection is set to ' + checkBox.checked);
+  });
+}
+
+function handleAgeSelectionMiddle(){
+  console.log("Age selection Middle Age");
+  const checkBox = document.getElementById('45+');
+  chrome.storage.local.set({"45+": checkBox.checked}, function() {
+    console.log('Middle age selection is set to ' + checkBox.checked);
+  });
+}
+
 function populateDistrictsSelect(state_id,selectedDistrict){
   let apiUrl = 'https://cdn-api.co-vin.in/api/v2/admin/location/districts/'+state_id;
   fetch(apiUrl).then(r =>  r.json()
@@ -56,7 +72,7 @@ function populateDistrictsSelect(state_id,selectedDistrict){
 }
 
 function setSelectedFields(){
-  chrome.storage.local.get(['enableSound','state','district'], function(result) {
+  chrome.storage.local.get(['enableSound','state','district',"18+","45+"], function(result) {
     console.log("Sound Enabled : ");
     console.log(result.enableSound);
     if(result.enableSound){
@@ -64,6 +80,20 @@ function setSelectedFields(){
     }else{
       document.getElementById('soundCheckbox').checked = false;
     }
+
+    if(result["18+"]){
+      document.getElementById('18+').checked = true;
+    }else{
+      document.getElementById('18+').checked = false;
+    }
+
+    if(result["45+"]){
+      document.getElementById('45+').checked = true;
+    }else{
+      document.getElementById('45+').checked = false;
+    }
+
+
     console.log("state");
     console.log(result.state)
     if(result.state){
@@ -114,5 +144,7 @@ function startNotification() {
 document.getElementById('enableNotification').addEventListener('click', enableNotification);
 document.getElementById('clearNotification').addEventListener('click', clearNotification);
 document.getElementById('soundCheckbox').addEventListener('change', handleSoundNotification);
+document.getElementById('18+').addEventListener('change', handleAgeSelectionAdult);
+document.getElementById('45+').addEventListener('change', handleAgeSelectionMiddle);
 document.getElementById('state').addEventListener('change', handleStateChange);
 document.getElementById('district').addEventListener('change', handleDistrictChange);
