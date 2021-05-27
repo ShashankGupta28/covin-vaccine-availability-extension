@@ -63,7 +63,7 @@ async function filterAvailability(data){
           const sessions = obj.sessions;
           for(var i=0;i<sessions.length;i++){
             const session = sessions[i];
-            if(session.available_capacity_dose1 > 1){
+            if(session.available_capacity_dose1){
               return true
             }
           }
@@ -73,7 +73,7 @@ async function filterAvailability(data){
           const sessions = obj.sessions;
           for(var i=0;i<sessions.length;i++){
             const session = sessions[i];
-            if(session.min_age_limit === 18  && session.available_capacity_dose1 > 1){
+            if(session.min_age_limit === 18  && session.available_capacity_dose1){
               return true
             }
           }
@@ -83,7 +83,7 @@ async function filterAvailability(data){
           const sessions = obj.sessions;
           for(var i=0;i<sessions.length;i++){
             const session = sessions[i];
-            if(session.min_age_limit === 45  && session.available_capacity_dose1 > 1){
+            if(session.min_age_limit === 45  && session.available_capacity_dose1){
               return true
             }
           }

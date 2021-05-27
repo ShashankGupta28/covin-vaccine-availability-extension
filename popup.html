@@ -4,6 +4,7 @@
     <style>
       body {
         text-align: center;
+        width: 200px;
       }
 
       #vaccine {
@@ -25,15 +26,14 @@
       }
 
       .ageSpan{
-        margin-right: 20px;
+        margin-right: 25px;
       }
 
     </style>
   </head>
   <body>
       <div class="text-center"><img src='./vaccine.png' id='vaccine'>
-        <button class="btn btn-success" id='enableNotification'>Enable Notification</button>
-        <button class="btn btn-danger" id='clearNotification'>Cancel notification</button>
+        <button class="btn btn-danger" id='notificationStatus'>Pause Notification</button>
         <a href="https://selfregistration.cowin.gov.in" target="_blank" class="btn btn-secondary active" role="button" aria-pressed="true">Co-WIN website</a>
       </div>
      
@@ -43,7 +43,8 @@
           Sound notification
         </label>
       </div>
-      <div class="form-check text-center">
+
+      <div id="ageDiv" class="form-check text-center">
         <span class="ageSpan">
           <input class="form-check-input" type="checkbox" id="18+">
           <label class="form-check-label" for="18+">18+</label>
