@@ -26,7 +26,7 @@ chrome.storage.local.get(['availabeOptions','enableSound','18+','45+'], function
           }
         }
       });
-      html += '<tr><th scope="row">'+ centre.name+'</th><td>'+ centre.address+'</td><td>'+ sessionData+'</td></tr>'
+      html += '<tr><th class='+ centre.fee_type +' scope="row">'+ centre.name + " - "+ centre.fee_type  + '</th><td>'+ centre.address+'</td><td>'+ sessionData+'</td></tr>'
       });
     document.getElementById("availCentre").innerHTML = html;
 

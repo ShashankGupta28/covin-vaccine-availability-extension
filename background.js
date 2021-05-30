@@ -51,14 +51,25 @@ async function handleResponse(data){
 
 async function filterAvailability(data){
   return await new Promise(function(resolve, reject){
-    chrome.storage.local.get(['18+','45+'], function(result) {
+    chrome.storage.local.get(['18+','45+',"covaxin","covishield","sputnik"], function(result) {
       var filteredData;
+      var selectedVaccine = [];
+      if(result["covaxin"]){
+        selectedVaccine.push("COVAXIN");
+      }
+      if(result["covishield"]){
+        selectedVaccine.push("COVISHIELD");
+      }
+      if(result["sputnik"]){
+        selectedVaccine.push("SPUTNIK");
+      }
+
       if(result["18+"] && result["45+"]){
         filteredData = data.centers.filter((obj) => {
           const sessions = obj.sessions;
           for(var i=0;i<sessions.length;i++){
             const session = sessions[i];
-            if(session.available_capacity_dose1){
+            if(session.available_capacity_dose1 && selectedVaccine.includes(session.vaccine)){
               return true
             }
           }
@@ -68,7 +79,7 @@ async function filterAvailability(data){
           const sessions = obj.sessions;
           for(var i=0;i<sessions.length;i++){
             const session = sessions[i];
-            if(session.min_age_limit === 18  && session.available_capacity_dose1){
+            if(session.min_age_limit === 18  && session.available_capacity_dose1 && selectedVaccine.includes(session.vaccine)){
               return true
             }
           }
@@ -78,7 +89,7 @@ async function filterAvailability(data){
           const sessions = obj.sessions;
           for(var i=0;i<sessions.length;i++){
             const session = sessions[i];
-            if(session.min_age_limit === 45  && session.available_capacity_dose1){
+            if(session.min_age_limit === 45  && session.available_capacity_dose1 && selectedVaccine.includes(session.vaccine)){
               return true
             }
           }

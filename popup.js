@@ -55,6 +55,21 @@ function handleAgeSelectionAdult(){
   });
 }
 
+function handleCovaxinSelect(){
+  const checkBox = document.getElementById('covaxin');
+  chrome.storage.local.set({"covaxin": checkBox.checked});
+}
+
+function handleCovishieldSelect(){
+  const checkBox = document.getElementById('covishield');
+  chrome.storage.local.set({"covishield": checkBox.checked});
+}
+
+function handleSputnikSelect(){
+  const checkBox = document.getElementById('sputnik');
+  chrome.storage.local.set({"sputnik": checkBox.checked});
+}
+
 function handleAgeSelectionMiddle(){
   console.log("Age selection Middle Age");
   const checkBox = document.getElementById('45+');
@@ -81,7 +96,7 @@ function populateDistrictsSelect(state_id,selectedDistrict){
 }
 
 function setSelectedFields(){
-  chrome.storage.local.get(['enableSound','state','district',"18+","45+","notificationStatus"], function(result) {
+  chrome.storage.local.get(['enableSound','state','district',"18+","45+","notificationStatus","covaxin","covishield","sputnik"], function(result) {
     console.log("Sound Enabled : ");
     console.log(result.enableSound);
     if(result.enableSound){
@@ -92,8 +107,10 @@ function setSelectedFields(){
 
     if(result["18+"] || result["45+"]){
       document.getElementById('ageDiv').style.display = "block";
+      document.getElementById('vaccineDiv').style.display = "block";
     }else{
       document.getElementById('ageDiv').style.display = "none";
+      document.getElementById('vaccineDiv').style.display = "none";
     }
 
     if(result["18+"]){
@@ -106,6 +123,24 @@ function setSelectedFields(){
       document.getElementById('45+').checked = true;
     }else{
       document.getElementById('45+').checked = false;
+    }
+
+    if(result["covaxin"]){
+      document.getElementById('covaxin').checked = true;
+    }else{
+      document.getElementById('covaxin').checked = false;
+    }
+
+    if(result["covishield"]){
+      document.getElementById('covishield').checked = true;
+    }else{
+      document.getElementById('covishield').checked = false;
+    }
+
+    if(result["sputnik"]){
+      document.getElementById('sputnik').checked = true;
+    }else{
+      document.getElementById('sputnik').checked = false;
     }
 
     const button = document.getElementById('notificationStatus');
@@ -170,11 +205,19 @@ function startNotification() {
   chrome.storage.local.set({"18+": true}, function() {
     console.log('Adult age selection is set to ' + true);
   });
+  chrome.storage.local.set({"covaxin": true});
+  chrome.storage.local.set({"covishield": true});
+  chrome.storage.local.set({"sputnik": true});
 }
 
 document.getElementById('notificationStatus').addEventListener('click', handleNotificationStatus);
 document.getElementById('soundCheckbox').addEventListener('change', handleSoundNotification);
 document.getElementById('18+').addEventListener('change', handleAgeSelectionAdult);
 document.getElementById('45+').addEventListener('change', handleAgeSelectionMiddle);
+document.getElementById('covaxin').addEventListener('change', handleCovaxinSelect);
+document.getElementById('covishield').addEventListener('change', handleCovishieldSelect);
+document.getElementById('sputnik').addEventListener('change', handleSputnikSelect);
+
+
 document.getElementById('state').addEventListener('change', handleStateChange);
 document.getElementById('district').addEventListener('change', handleDistrictChange);
