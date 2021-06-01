@@ -27,7 +27,7 @@ function handleAvailableCentersTab(){
 
 async function fetchDataFromApi(district_id){
   let date = new Date();
-  let dateString = date.getDate()  + "-" + ('0'+(date.getMonth()+1)).slice(-2) + "-" + date.getFullYear()
+  let dateString = ('0'+(date.getDate())).slice(-2)  + "-" + ('0'+(date.getMonth()+1)).slice(-2) + "-" + date.getFullYear()
   let apiUrl = 'https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id=' + district_id +'&date=' + dateString;
   let request = await fetch(apiUrl);
   const data = await request.json();
